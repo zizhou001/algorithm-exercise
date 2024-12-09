@@ -1,6 +1,7 @@
 package heat100;
 
 import java.util.HashSet;
+import java.util.Set;
 
 /**
  * 关键点：
@@ -21,23 +22,21 @@ public class LongestConsecutive {
     }
 
     public static int solution(int[] nums){
-
-
-        HashSet<Integer> set = new HashSet<>();
-        int longestLen = 0;
-        for (int num : nums) set.add(num);
-        for (int num : nums){
-            if (!set.contains(num - 1)){
-                int curNum = num;
-                int curLen = 1;
-
-                while (set.contains(curNum + 1)){
-                    curNum += 1;
-                    curLen += 1;
-                }
-                longestLen = Math.max(longestLen, curLen);
-            }
+        if(nums == null || nums.length == 0) return 0;
+        Set<Integer> st = new HashSet<>();
+        int ans = 0;
+        for(int num : nums) {
+            st.add(num);
         }
-        return longestLen;
+
+        for(int x : st) {
+            if(st.contains(x-1)) continue;
+            int y = x + 1;
+            while(st.contains(y)) {
+                y += 1;
+            }
+            ans = Math.max(ans, y - x);
+        }
+        return ans;
     }
 }

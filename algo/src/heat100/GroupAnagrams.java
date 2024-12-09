@@ -1,6 +1,9 @@
 package heat100;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -16,13 +19,13 @@ public class GroupAnagrams {
         // System.out.println(sortStr("tea"));
     }
 
-    public static List<List<String>> solution(String[] strs){
+    public static List<List<String>> solution(String[] strs) {
 
         HashMap<String, ArrayList<String>> stringVectorHashMap = new HashMap<>();
 
         for (int i = 0; i < strs.length; i++) {
             String sortedStr = sortStr(strs[i]);
-            if (!stringVectorHashMap.containsKey(sortedStr)){
+            if (!stringVectorHashMap.containsKey(sortedStr)) {
                 stringVectorHashMap.put(sortedStr, new ArrayList<>());
             }
             stringVectorHashMap.get(sortedStr).add(strs[i]);
@@ -31,7 +34,7 @@ public class GroupAnagrams {
         return stringVectorHashMap.values().stream().map(ArrayList::new).collect(Collectors.toList());
     }
 
-    public static String sortStr(String str){
+    public static String sortStr(String str) {
         char[] charArray = str.toCharArray();
         Arrays.sort(charArray);
         return String.valueOf(charArray);
