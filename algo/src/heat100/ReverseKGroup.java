@@ -11,60 +11,35 @@ import utils.ListUtils;
 public class ReverseKGroup {
 
     public static void main(String[] args) {
-        ListUtils.printList(new ReverseKGroup().reverseKGroup(ListUtils.generateList(new int[]{1,2,3,4,5}), 2));
+        ListUtils.printList(new ReverseKGroup().reverseKGroup(ListUtils.generateList(new int[]{1, 2, 3, 4, 5}), 2));
     }
 
+    /**
+     * 递归
+     *
+     * @param head
+     * @param k
+     * @return
+     */
     public ListNode reverseKGroup(ListNode head, int k) {
-
+        // 子链表长度，不够k时，不做翻转，直接返回子链表head
         ListNode p = head;
-        ListNode gNewHead = null, gNewTail = null, lastNewTail = null;
-
-        int i = 0;
-        while (p != null){
-
-            ListNode gOldHead = p;
-            while (i < k - 1 && p != null){
-                p = p.next;
-                ++i;
-            }
-            if (p == null) {
-                lastNewTail.next = gOldHead;
-                return head;
-            }
-            ListNode gOldTail = p;
-            ListNode gOldTailNext = gOldTail.next;
-
-            i = 0;
-            ListNode[] reversedTmp = reverseList(gOldHead, gOldTailNext);
-            gNewHead = reversedTmp[0];
-            gNewTail = reversedTmp[1];
-            if (lastNewTail == null) {
-                head = gNewHead;
-            }
-            else {
-                lastNewTail.next = gNewHead;
-            }
-            lastNewTail = gNewTail;
-            gNewTail.next = gOldTailNext;
-            p = gOldTailNext;
+        int count = 0;
+        while (p != null) {
+            ++count;
+            p = p.next;
         }
+        if (count < k) return head;
 
-        return head;
-    }
-
-    public ListNode[] reverseList(ListNode head, ListNode tailNext) {
-        ListNode[] newHeadAndTail = new ListNode[2];
-        if (head == tailNext || head.next == tailNext) return new ListNode[]{head, head};
-        ListNode prev = null, next = null, cur = head;
-
-        while (cur != tailNext){
+        // 递归翻转子链表，例如，对于1,2,3,4,5的第一次调用
+        ListNode prev = head, cur = head.next, next = null;
+        for (int i = 0; i < k - 1; i++) {  // 只需要处理k-1个节点
             next = cur.next;
             cur.next = prev;
             prev = cur;
             cur = next;
         }
-        newHeadAndTail[0] = prev;
-        newHeadAndTail[1] = head;
-        return newHeadAndTail;
+        head.next = reverseKGroup(cur, k);
+        return prev;
     }
 }
