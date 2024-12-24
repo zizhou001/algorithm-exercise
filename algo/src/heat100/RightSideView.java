@@ -17,6 +17,8 @@ import java.util.stream.IntStream;
  */
 public class RightSideView {
 
+    List<Integer> res = new ArrayList<>();
+
     public static void main(String[] args) {
         BTreeUtils utils = new BTreeUtils();
         TreeNode root = utils.buildTreeByLevel(new Integer[]{1, 2, 3, null, 5, null, 4});
@@ -25,8 +27,39 @@ public class RightSideView {
         res.forEach(System.out::println);
     }
 
-    List<Integer> res = new ArrayList<>();
-    public List<Integer> rightSideView31(TreeNode root){
+    /**
+     * 选择这个方法
+     *
+     * @param root
+     * @return
+     */
+    public List<Integer> rightSideView(TreeNode root) {
+        List<Integer> ans = new ArrayList<>();
+        if (root == null) {
+            return ans;
+        }
+        Deque<TreeNode> queue = new ArrayDeque<>();
+        queue.offer(root);
+
+        while (!queue.isEmpty()) {
+            int n = queue.size();
+            for (int i = 1; i <= n; i++) {
+                TreeNode node = queue.poll();
+                if (node.left != null) {
+                    queue.offer(node.left);
+                }
+                if (node.right != null) {
+                    queue.offer(node.right);
+                }
+                if (i == n) {
+                    ans.add(node.val);
+                }
+            }
+        }
+        return ans;
+    }
+
+    public List<Integer> rightSideView31(TreeNode root) {
         dfs(root, 0);
         return res;
     }
@@ -39,7 +72,7 @@ public class RightSideView {
      * @param root
      * @param depth
      */
-    public void dfs(TreeNode root, int depth){
+    public void dfs(TreeNode root, int depth) {
         if (root == null) return;
         if (depth == res.size()) res.add(root.val);
         dfs(root.right, depth + 1);
@@ -61,12 +94,12 @@ public class RightSideView {
         Deque<Integer> depthStack = new LinkedList<>();
         nodeStack.push(root);
         depthStack.push(0);
-        while (!nodeStack.isEmpty()){
+        while (!nodeStack.isEmpty()) {
             TreeNode node = nodeStack.pop();
             Integer depth = depthStack.pop();
-            if (node != null){
+            if (node != null) {
                 max_depth = Math.max(depth, max_depth);
-                if (!valAtDepth.containsKey(depth)){
+                if (!valAtDepth.containsKey(depth)) {
                     valAtDepth.put(depth, node.val);
                 }
                 nodeStack.push(node.left);
@@ -94,10 +127,10 @@ public class RightSideView {
         Deque<Integer> depthQueue = new LinkedList<>();
         nodeQueue.add(root);
         depthQueue.add(0);
-        while (!nodeQueue.isEmpty()){
+        while (!nodeQueue.isEmpty()) {
             TreeNode node = nodeQueue.poll();
             Integer depth = depthQueue.poll();
-            if (node != null){
+            if (node != null) {
                 max_depth = Math.max(depth, max_depth);
                 // 直接更新，最终记录的是最后一次的更新结果（该层最后一个节点）
                 valAtDepth.put(depth, node.val);
@@ -117,11 +150,11 @@ public class RightSideView {
     /**
      * 思路1-1：广度优先，（执行用时和空间复杂度较高）
      * 1. 得到层序遍历结果
-     * @see LevelOrder#levelOrder(TreeNode)
-     * 2. 取每个层最后一个元素
      *
      * @param root
      * @return
+     * @see LevelOrder#levelOrder(TreeNode)
+     * 2. 取每个层最后一个元素
      */
     public List<Integer> rightSideView11(TreeNode root) {
         List<List<Integer>> lists = levelOrder(root);
