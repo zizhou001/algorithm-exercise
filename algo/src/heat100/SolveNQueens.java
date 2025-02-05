@@ -1,8 +1,6 @@
 package heat100;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author zizhou
@@ -11,77 +9,58 @@ import java.util.List;
  */
 public class SolveNQueens {
 
-    List<List<String>> ans;
-    int queenNum;
-    int[][] put;
+    Set<Integer> columns = new HashSet<>();
+    Set<Integer> primary = new HashSet<>();
+    Set<Integer> secondary = new HashSet<>();
 
-    public static void main(String[] args) {
-        SolveNQueens s = new SolveNQueens();
-        List<List<String>> lists = s.solveNQueens(5);
-        lists.forEach(System.out::println);
-    }
+    List<List<String>> solutions = new ArrayList<List<String>>();
 
     public List<List<String>> solveNQueens(int n) {
-        ans = new ArrayList<>();
-        if (n == 1) {
-            ans.add(new ArrayList<>(Arrays.asList("Q")));
-            return ans;
-        }
-        queenNum = n;
-        put = new int[n][n];
-        backtrack(0, 0, initializeStringBufferWithDots(queenNum), new ArrayList<>());
-        return ans;
+        int[] queens = new int[n];
+        Arrays.fill(queens, -1);
+        backtrack(n, 0, queens);
+        return solutions;
     }
 
-    public void backtrack(int row, int col, StringBuffer line, List<String> plan) {
-        if (row == queenNum) {
-            ans.add(new ArrayList<>(plan));
-            return;
-        }
-        for (int j = col; j < queenNum; j++) {
-            if (check(row, j)) {
-                put[row][j] = 1;
-                line.setCharAt(j, 'Q');
-                plan.add(line.toString());
-                backtrack(row + 1, 0, initializeStringBufferWithDots(queenNum), plan);
-                plan.remove(plan.size() - 1);
-                put[row][j] = 0;
-                line.setCharAt(j, '.');
+    public void backtrack(int n, int row, int[] queens){
+        if (row == n){
+            List<String> board = generateBoard(queens, n);
+            solutions.add(board);
+        }else{
+            for (int col = 0; col < n; col++) {
+                if (columns.contains(col)){
+                    continue;
+                }
+                int p = row - col;
+                if (primary.contains(p)){
+                    continue;
+                }
+                int s = row + col;
+                if (secondary.contains(s)){
+                    continue;
+                }
+
+                queens[row] = col;
+                columns.add(col);
+                primary.add(p);
+                secondary.add(s);
+                backtrack(n, row + 1, queens);
+                secondary.remove(s);
+                primary.remove(p);
+                columns.remove(col);
+                queens[row] = -1;
             }
         }
     }
 
-    public boolean check(int row, int col) {
-
-        if (row == 0) return true;
-
-        // 检查同一列是否有棋子
-        for (int i = 0; i < queenNum; i++) {
-            if (put[i][col] == 1) return false;
+    public List<String> generateBoard(int[] queens, int n) {
+        List<String> board = new ArrayList<String>();
+        for (int i = 0; i < n; i++) {
+            char[] row = new char[n];
+            Arrays.fill(row, '.');
+            row[queens[i]] = 'Q';
+            board.add(new String(row));
         }
-
-        // 检查斜线上是否有棋子
-        int i = 0, j = 0;
-        i = row - Math.min(row, col);
-        j = col - Math.min(row, col);
-        while (i < queenNum && j < queenNum) {
-            if (put[i++][j++] == 1) return false;
-        }
-        i = row + Math.min(queenNum - 1 - row, col);
-        j = col - Math.min(queenNum - 1 - row, col);
-        while (i >= 0 && j < queenNum) {
-            if (put[i--][j++] == 1) return false;
-        }
-        return true;
-    }
-
-    public static StringBuffer initializeStringBufferWithDots(int n) {
-        if (n <= 0) {
-            return new StringBuffer(); // 返回空的StringBuffer
-        }
-
-        char[] dots = new char[n];
-        java.util.Arrays.fill(dots, '.');
-        return new StringBuffer(new String(dots));
+        return board;
     }
 }
