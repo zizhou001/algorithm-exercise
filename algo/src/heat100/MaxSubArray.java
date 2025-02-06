@@ -18,6 +18,9 @@ public class MaxSubArray {
     }
 
     /**
+     *
+     * "与你一起  or 做我自己"
+     *
      * 动态规划：
      * f(i)代表数组中以nums[i]结束的最大和。
      * 即：f(i) 应该为 max{f(i)+nums[i], nums[i]}
