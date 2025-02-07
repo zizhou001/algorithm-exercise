@@ -1,5 +1,8 @@
 package heat100;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author zizhou
  * @version 1.0.0
@@ -8,7 +11,7 @@ package heat100;
 public class FindMedianSortedArrays {
     public static void main(String[] args) {
         FindMedianSortedArrays s = new FindMedianSortedArrays();
-        System.out.println(s.findMedianSortedArrays(new int[]{}, new int[]{2, 3}));
+        System.out.println(s.findMedianSortedArrays2(new int[]{1,2}, new int[]{3, 4}));
     }
 
     public double findMedianSortedArrays(int[] nums1, int[] nums2) {
@@ -61,5 +64,32 @@ public class FindMedianSortedArrays {
             ++k;
         }
         return cur;
+    }
+
+    public double findMedianSortedArrays2(int[] nums1, int[] nums2) {
+        List<Integer> list = new ArrayList<>();
+
+        int i1 = 0, i2 = 0;
+        while(i1 < nums1.length && i2 < nums2.length){
+            if(nums1[i1] <= nums2[i2]){
+                list.add(nums1[i1++]);
+            }else{
+                list.add(nums2[i2++]);
+            }
+        }
+
+        while(i1 < nums1.length){
+            list.add(nums1[i1++]);
+        }
+        while(i2 < nums2.length){
+            list.add(nums2[i2++]);
+        }
+
+        int sum = list.size();
+        if(sum % 2 != 0){
+            return list.get(sum / 2) * 1.0;
+        }else{
+            return (list.get(sum / 2) + list.get(sum / 2 - 1)) * 0.5;
+        }
     }
 }
